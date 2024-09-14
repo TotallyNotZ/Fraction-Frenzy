@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Addition Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            position: relative;
+        }
+        #content {
+            margin: 0 auto;
+            padding: 20px;
+        }
+        #question {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        #answer {
+            width: 200px;
+            height: 30px;
+            font-size: 16px;
+        }
+        #feedback {
+            display: none;
+            font-size: 20px;
+            color: rgb(0, 179, 0);
+            margin-top: 20px;
+        }
+        #feedback img {
+            vertical-align: middle;
+        }
+        #score, #stopwatch {
+            position: absolute;
+            top: 10px; /* Adjust this to move them down from the top */
+            left: 10px; /* Align them to the left */
+            font-size: 20px;
+        }
+        #stopwatch {
+            margin-top: 30px; /* Adjust to position below the score */
+        }
+        #back-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            text-decoration: none;
+            color: blue;
+            font-size: 16px;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 0, 0, 0.6);
+            display: none; /* Hidden by default */
+            z-index: 1000; /* Ensure it appears above other content */
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Background Music -->
+    <audio id="backgroundMusic" src="effects/Local Elevator - Kevin MacLeod.mp3" autoplay loop></audio>
+
+    <a id="back-button" href="index.html">Go Back</a>
+    <div id="score">Score: 0</div>
+    <div id="stopwatch">Time Left: 10s</div>
+    
+    <div id="content">
+        <div id="question"></div>
+        <input id="answer" type="text" placeholder="Type your answer">
+        <div id="feedback"></div>
+    </div>
+    <div class="overlay" id="overlay"></div>
+
+    <audio id="ding-sound" src="effects/ding.MP3"></audio>
+    <audio id="buzzer-sound" src="effects/buzzer.MP3"></audio>
+    <audio id="tick-sound" src="effects/tick.mp3"></audio> <!-- Added sound for timer updates -->
+    <audio id="time-up-sound" src="effects/time-up.mp3"></audio> <!-- Added sound for when timer hits zero -->
+
+    <script>
+        let currentQuestion = { a: 0, b: 0 }; // Initialize currentQuestion
+        let score = 0; // Initialize score
+        let timer; // Timer variable
+        const countdownTime = 10; // Time in seconds for countdown
+
+        function getRandomNumber(max) {
+            return Math.floor(Math.random() * max) + 1;
+        }
+
+        function generateQuestion() {
+            let a = getRandomNumber(20);  // Generate random number between 1 and 20
+            let b = getRandomNumber(20);  // Generate random number between 1 and 20
+            // Ensure a is always greater than or equal to b to avoid negative results
+            if (a < b) {
+                [a, b] = [b, a];
+            }
+            currentQuestion = { a, b };
+            document.getElementById('question').textContent = `What is ${a} + ${b}?`;
+            document.getElementById('answer').value = '';  // Clear the answer box
+
+            resetStopwatch(); // Reset the stopwatch when a new question is generated
+        }
+
+        function updateScore(correct) {
+            if (correct) {
+                score += 1;
+                document.getElementById('feedback').innerHTML = '<img src="effects/check.png" width="24" height="24" alt="Check"> Good job!';
+                document.getElementById('feedback').style.display = 'block';
+                document.getElementById('ding-sound').play();
+            } else {
+                score -= 1;
+                document.getElementById('feedback').innerHTML = '<img src="effects/buzzer.png" width="24" height="24" alt="Buzzer"> Incorrect!';
+                document.getElementById('feedback').style.display = 'block';
+                document.getElementById('buzzer-sound').play();
+            }
+            document.getElementById('score').textContent = `Score: ${score}`;
+            setTimeout(() => {
+                document.getElementById('feedback').style.display = 'none';
+                generateQuestion();
+            }, 2500);
+        }
+
+        function checkAnswer() {
+            const answer = parseInt(document.getElementById('answer').value, 10);
+            const correctAnswer = currentQuestion.a + currentQuestion.b;
+
+            if (isNaN(answer)) {
+                alert('Please enter a valid number.');
+                return;
+            }
+
+            updateScore(answer === correctAnswer);
+        }
+
+        function startStopwatch() {
+            let timeLeft = countdownTime;
+            document.getElementById('stopwatch').textContent = `Time Left: ${timeLeft}s`;
+
+            timer = setInterval(() => {
+                timeLeft -= 1;
+                document.getElementById('stopwatch').textContent = `Time Left: ${timeLeft}s`;
+                document.getElementById('tick-sound').play(); // Play ticking sound every second
+
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    document.getElementById('time-up-sound').play(); // Play time-up sound
+                    document.getElementById('feedback').innerHTML = '<img src="effects/buzzer.png" width="24" height="24" alt="Buzzer"> Time\'s up!';
+                    document.getElementById('feedback').style.display = 'block';
+                    document.getElementById('buzzer-sound').play();
+                    setTimeout(() => {
+                        document.getElementById('feedback').style.display = 'none';
+                        generateQuestion();
+                    }, 2500);
+                }
+            }, 1000);
+        }
+
+        function resetStopwatch() {
+            clearInterval(timer);
+            startStopwatch();
+        }
+
+        document.getElementById('answer').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+
+        // Generate an initial question and start the stopwatch when the page loads
+        generateQuestion();
+    </script>
+</body>
+</html>

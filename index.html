@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fraction Frenzy</title>
+    <style>
+        /* Style for the body and elements */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: white;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: lightblue;
+            padding: 20px;
+            text-align: center;
+        }
+        main {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 60vh;
+        }
+        .buttons {
+            text-align: center;
+        }
+        button {
+            display: block;
+            width: 150px;
+            padding: 10px;
+            margin: 10px auto;
+            font-size: 16px;
+        }
+        footer {
+            background-color: lightblue;
+            text-align: center;
+            padding: 10px;
+            position: relative;
+            width: 100%;
+            bottom: 0;
+        }
+        .comment-section {
+            text-align: center;
+            margin: 10px;
+            margin-bottom: calc(10px); /* Adjust margin as needed */
+        }
+        .comments-display {
+            margin-top: 20px;
+        }
+        .comment {
+            border-bottom: 1px solid #ccc;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Music -->
+    <audio id="backgroundMusic" src="effects/The Painted Night - National Sweetheart.mp3" loop></audio>
+
+    <!-- Header -->
+    <header>
+        <h1>Choose a Math Operation</h1>
+    </header>
+
+    <!-- Main Content with Buttons -->
+    <main>
+        <div class="buttons">
+            <button onclick="window.location.href='add.html'">Addition</button>
+            <button onclick="window.location.href='sub.html'">Subtraction</button>
+            <button onclick="window.location.href='multi.html'">Multiplication</button>
+            <button onclick="window.location.href='div.html'">Division</button>
+        </div>
+    </main>
+
+    <!-- Comment Section -->
+    <section class="comment-section">
+        <h2>Leave a Comment</h2>
+        <textarea id="commentInput" rows="4" cols="50" placeholder="Write your comment here..."></textarea>
+        <br>
+        <button onclick="saveComment()">Submit Comment</button>
+        <div class="comments-display" id="commentsDisplay"></div>
+    </section>
+
+    <!-- JavaScript for Comment Section -->
+    <script>
+        function saveComment() {
+            const commentInput = document.getElementById("commentInput").value;
+            if (commentInput.trim()) {
+                const commentDiv = document.createElement("div");
+                commentDiv.className = "comment";
+                commentDiv.textContent = commentInput;
+                document.getElementById("commentsDisplay").appendChild(commentDiv);
+                document.getElementById("commentInput").value = ''; // Clear input field
+            } else {
+                alert("Please enter a comment.");
+            }
+        }
+
+        // Function to play background music
+        function playBackgroundMusic() {
+            const audio = document.getElementById('backgroundMusic');
+            audio.play().catch(error => {
+                // Handle errors or user interaction requirements
+                console.log('Autoplay was prevented:', error);
+            });
+        }
+
+        // Play music when the page loads
+        window.addEventListener('load', playBackgroundMusic);
+    </script>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Fraction Frenzy. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
